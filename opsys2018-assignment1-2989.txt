@@ -1,0 +1,36 @@
+#!/bin/bash
+
+sed -i '/^#/d' test
+sed -i '/^$/d' test
+
+while read p
+do
+while read line in p
+do
+wget $line
+echo $line ' INIT'
+done
+done < test
+
+echo 'Do you want to run the script again? (y/n)'
+read ans
+
+if [ $ans=="y" ]
+then
+
+while read p
+do
+while read line in p
+do
+mv new.html $line 2> /dev/null
+wget $line -L --compressed -s > new.html
+diff_out = "$(diff new.html $line)"
+
+if [ "0" != "${#diff_out}" ]
+then
+echo $line
+fi
+
+done
+done < test
+fi
